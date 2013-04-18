@@ -88,3 +88,4 @@ Please contact me if you are looking for commercial data solutions.
 Copyright (c) 2011 - 2012 Chad Remesch. See LICENSE.txt for
 further details.
 
+This fork contains minor fixes for crashes, by Oded Arbel.
