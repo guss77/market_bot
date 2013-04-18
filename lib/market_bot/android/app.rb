@@ -1,6 +1,13 @@
 module MarketBot
   module Android
 
+    class ParseError < RuntimeError
+      attr :html
+      def initialize(html)
+        @html = html
+      end
+    end
+
     class App
       MARKET_ATTRIBUTES = [:title, :rating, :updated, :current_version, :requires_android,
                           :category, :installs, :size, :price, :content_rating, :description,
@@ -20,6 +27,7 @@ module MarketBot
 
         doc = Nokogiri::HTML(html)
 
+        raise ParseError.new(html), "Failed to parse app page" if doc.css('.doc-metadata').first.nil?
         elements = doc.css('.doc-metadata').first.elements[2].elements
         elem_count = elements.count
 

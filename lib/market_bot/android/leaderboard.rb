@@ -22,21 +22,18 @@ module MarketBot
 
           details_node = snippet_node.css('.details')
 
-          unless snippet_node.css('.ratings').empty?
+          unless snippet_node.css('.ratings').empty? or snippet_node.css('.ratings').first.attributes['title'].nil?
             stars_text = snippet_node.css('.ratings').first.attributes['title'].value
-            result[:stars] = /Rating: (.+) stars .*/.match(stars_text)[1]
+            m = /Rating: (.+) stars .*/.match(stars_text)
+            result[:stars] = m[1] unless m.nil?
           else
             result[:stars] = nil
           end
 
-          result[:title] = details_node.css('.title').first.attributes['title'].to_s
-
-          if (price_elem = details_node.css('.buy-button-price').children.first)
-            result[:price_usd] = price_elem.text.gsub(' Buy', '')
-          end
-
-          result[:developer] = details_node.css('.attribution').children.first.text
-          result[:market_id] = details_node.css('.title').first.attributes['href'].to_s.gsub('/store/apps/details?id=', '').gsub(/&feature=.*$/, '')
+          result[:title] = details_node.css('.title').first.attributes['title'].to_s unless details_node.css('.title').empty?
+          result[:price_usd] = details_node.css('.buy-button-price').children.first.text.gsub(' Buy', '') unless details_node.css('.buy-button-price').children.empty?
+          result[:developer] = details_node.css('.attribution').children.first.text unless details_node.css('.attribution').children.empty?
+          result[:market_id] = details_node.css('.title').first.attributes['href'].to_s.gsub('/store/apps/details?id=', '').gsub(/&feature=.*$/, '') unless details_node.css('.title').empty?
           result[:market_url] = "https://play.google.com/store/apps/details?id=#{result[:market_id]}&hl=en"
 
           result[:price_usd] = '$0.00' if result[:price_usd] == 'Install'
